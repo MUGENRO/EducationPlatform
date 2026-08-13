@@ -1,10 +1,11 @@
 export const school = {
-  name: "Oxford Learning Center",
+  name: "Prime Coach English School",
 
-  subtitle: "Автоматический помощник",
+  subtitle: "AI-помощник",
 
   courses: [
-    "🇬🇧 English",
+    "🇬🇧 General English",
     "🎯 IELTS",
+    "🗣️ Speaking",
   ],
 };
