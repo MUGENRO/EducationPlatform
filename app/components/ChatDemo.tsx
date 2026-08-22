@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { school } from "../../data/school";
+import { supabase } from "../../lib/supabase";
 
 type Step =
   | "welcome"
@@ -266,18 +267,50 @@ export default function ChatDemo() {
     }, 300);
   }
 
-  function submitPhone() {
-    const value = phone.trim();
+async function submitPhone() {
+  const value = phone.trim();
 
-    if (!value) return;
+  if (!value) return;
 
-    addUserMessage(value);
+  addUserMessage(value);
 
-    setTimeout(() => {
-      addBotMessage(school.successText);
-      setStep("success");
-    }, 500);
+  console.log("REGISTRATION DATA:", {
+    name: adultName || childName,
+    phone: value,
+    direction,
+    englishGoal,
+    languageGoal,
+    level,
+  });
+
+  const { error } = await supabase
+    .from("registrations")
+    .insert({
+      name: adultName || childName,
+      phone: value,
+      course: direction.includes("Английский") ? englishGoal : languageGoal,
+      level: level,
+      email: null,
+    });
+
+  if (error) {
+    console.error("Supabase error message:", error.message);
+    console.error("Supabase error details:", error.details);
+    console.error("Supabase error hint:", error.hint);
+    console.error("Supabase error code:", error.code);
+
+    addBotMessage(
+      `❌ Ошибка: ${error.message}`
+    );
+
+    return;
   }
+
+  setTimeout(() => {
+    addBotMessage(school.successText);
+    setStep("success");
+  }, 500);
+}
 
   function resetChat() {
     setMessages([
